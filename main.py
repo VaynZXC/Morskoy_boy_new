@@ -48,7 +48,7 @@ class Ship:
         return ship_dots
 
     def shooten(self, shot):
-        return shot in self.dots
+        return shot in self.dots()
 
 
 class BoardOutException(BoardException):
@@ -121,9 +121,9 @@ class Board:
         self.busy_cells.append(d)
 
         for ship in self.ships:
-            if d in ship.shooten(d):
+            if ship.shooten(d):
                 ship.lives -= 1
-                self.field[d.x][d.y] = " X "
+                self.field[d.x][d.y] = "X"
                 if ship.lives == 0:
                     self.destroyed_ships += 1
                     self.contour(ship, verb=True)
@@ -185,6 +185,7 @@ class User(Player):
 
             return Dot(x - 1, y - 1)
 
+
 class Game:
     def __init__(self, size=6):
         self.size = size
@@ -205,12 +206,12 @@ class Game:
         lens = [3, 2, 2, 1, 1, 1, 1]
         board = Board(size=self.size)
         attempts = 0
-        for l in lens:
+        for laa in lens:
             while True:
                 attempts += 1
                 if attempts > 2000:
                     return None
-                ship = Ship(Dot(randint(0, self.size), randint(0, self.size)), l, randint(0, 1))
+                ship = Ship(Dot(randint(0, self.size), randint(0, self.size)), laa, randint(0, 1))
                 try:
                     board.add_ship(ship)
                     break
@@ -242,12 +243,12 @@ class Game:
             if repeat:
                 num -= 1
 
-            if self.ai.board.count == 7:
+            if self.ai.board.destroyed_ships == 7:
                 print("-" * 20)
                 print("Вы выиграли!")
                 break
 
-            if self.us.board.count == 7:
+            if self.us.board.destroyed_ships == 7:
                 print("-" * 20)
                 print("Вы проиграли, попробуйте снова!")
                 break
@@ -256,6 +257,7 @@ class Game:
     def start(self):
         self.intro()
         self.loop()
+
 
 g = Game()
 g.start()
